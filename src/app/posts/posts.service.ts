@@ -29,7 +29,8 @@ export class PostsService {
     const post: Post = { id: null, title: title, content: content };
     this.http
       .post<{ message: string }>(`${environment.URL}/api/posts`, post)
-      .subscribe((res) => {
+      .subscribe((res: any) => {
+        console.log(res);
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
       });
