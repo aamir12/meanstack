@@ -1,6 +1,9 @@
 const http = require("http");
 const colors = require("colors");
-const dotenv = require("dotenv").config();
+const dotenv = require("dotenv").config({
+  path: "./backend/config/config.env",
+});
+
 const debug = require("debug")("node-angular");
 const app = require("./backend/app");
 
