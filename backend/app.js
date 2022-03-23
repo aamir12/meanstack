@@ -1,11 +1,16 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const serverConfig = require("./config.js");
+const morgan = require("morgan");
+const serverConfig = require("./config/config.js");
 
 //middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 if (process.env.NODE_ENV === "development") {
   app.use(cors());
+  app.use(morgan("dev"));
 } else {
   const whitelist = serverConfig.allowOrigins;
   const corsOptions = {
@@ -35,9 +40,6 @@ if (process.env.NODE_ENV === "development") {
 //   next();
 // });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 app.get("/api/posts", (req, res, next) => {
   const posts = [
     {
@@ -53,6 +55,14 @@ app.get("/api/posts", (req, res, next) => {
   ];
 
   res.status(200).json({ message: "Fetch post list successfully", posts });
+});
+
+app.post("/api/posts", (req, res, next) => {
+  const post = req.body;
+  console.log(post);
+  res.status(200).json({
+    message: "Post added successfully",
+  });
 });
 
 module.exports = app;

@@ -1,4 +1,5 @@
 const http = require("http");
+const colors = require("colors");
 const dotenv = require("dotenv").config();
 const debug = require("debug")("node-angular");
 const app = require("./backend/app");
@@ -41,7 +42,9 @@ const onError = (error) => {
 const onListening = () => {
   const addr = server.address();
   const bind = typeof port === "string" ? "pipe " + port : "port " + port;
-  console.log(`Server is running at ${port} in ${process.env.NODE_ENV}`);
+  console.log(
+    `Server running in ${process.env.NODE_ENV} mode on port ${port}`.yellow.bold
+  );
   debug("Listening on " + bind);
 };
 
@@ -52,3 +55,10 @@ const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
 server.listen(port);
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err, promise) => {
+  console.log(`Error: ${err.message}`.red);
+  // Close server & exit process
+  // server.close(() => process.exit(1));
+});
