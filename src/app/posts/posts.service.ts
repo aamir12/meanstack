@@ -1,15 +1,24 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 import { Post } from './post.model';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class PostsService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
+  constructor(private http: HttpClient) {}
+
   getPosts() {
-    return [...this.posts];
+    this.http
+      .get<{ message: string; posts: Post[] }>(`${environment.URL}/api/posts`)
+      .subscribe((res) => {
+        this.posts = res.posts;
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 
   getPostUpdateListener() {
@@ -17,7 +26,7 @@ export class PostsService {
   }
 
   addPost(title: string, content: string) {
-    const post: Post = {title: title, content: content};
+    const post: Post = { id: null, title: title, content: content };
     this.posts.push(post);
     this.postsUpdated.next([...this.posts]);
   }
