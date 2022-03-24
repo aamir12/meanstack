@@ -8,7 +8,7 @@ const getPostList = asyncHandler(async (req, res) => {
   const posts = await Post.find();
   res.status(200).json({
     message: "Posts fetched successfully!",
-    posts,
+    posts
   });
 });
 
@@ -17,22 +17,25 @@ const getPostList = asyncHandler(async (req, res) => {
 const getPostById = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (post) {
-    res.json(post);
+    res.json({
+      message:"Fetch successfully",
+      post
+    });
   } else {
     res.status(404);
     throw new Error("Post not found");
   }
 });
 
-// @desc    Delete a product
-// @route   DELETE /api/products/:id
+// @desc    Delete a post
+// @route   DELETE /api/posts/:id
 // @access  Private/Admin
 const deletePost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
 
   if (post) {
     await post.remove();
-    res.json({ message: "Post removed" });
+    res.json({ message: "Post deleted" });
   } else {
     res.status(404);
     throw new Error("Post not found");
@@ -47,13 +50,16 @@ const createPost = asyncHandler(async (req, res) => {
     content: req.body.content,
   });
   const createdPost = await post.save();
-  res.status(201).json(createdPost);
+  res.status(201).json({
+    message: "Post added successfully",
+    postId: createdPost._id
+  });
 });
 
-// @desc    Update a product
+// @desc    Update a post
 // @route   PUT /api/posts/:id
 
-const updateProduct = asyncHandler(async (req, res) => {
+const updatePost = asyncHandler(async (req, res) => {
   const { title, content } = req.body;
   const post = await Post.findById(req.params.id);
   if (post) {
@@ -63,7 +69,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     res.json(updatedPost);
   } else {
     res.status(404);
-    throw new Error("Product not found");
+    throw new Error("Post not found");
   }
 });
 
@@ -72,5 +78,5 @@ module.exports = {
   getPostById,
   deletePost,
   createPost,
-  updateProduct,
+  updatePost
 };
