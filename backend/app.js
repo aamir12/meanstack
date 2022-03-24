@@ -2,7 +2,12 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware.js");
 const serverConfig = require("./config/serverConfig.js");
+const connectDB = require("./config/db.js");
+
+//connect to database
+connectDB();
 
 //middleware
 app.use(express.json());
@@ -15,7 +20,7 @@ if (process.env.NODE_ENV === "development") {
   const whitelist = serverConfig.allowOrigins;
   const corsOptions = {
     origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -40,29 +45,25 @@ if (process.env.NODE_ENV === "development") {
 //   next();
 // });
 
-app.get("/api/posts", (req, res, next) => {
-  const posts = [
-    {
-      id: "01",
-      title: "First title",
-      content: "This is coming from server",
-    },
-    {
-      id: "02",
-      title: "Second title",
-      content: "This is coming from server",
-    },
-  ];
+const postRoutes = require("./routes/post");
 
-  res.status(200).json({ message: "Fetch post list successfully", posts });
-});
+app.use("/api/posts", postRoutes);
 
-app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
-  console.log(post);
-  res.status(200).json({
-    message: "Post added successfully",
-  });
-});
+//configuration for static file
+
+app.use(notFound);
+app.use(errorHandler);
+
+// app.get("/api/posts", (req, res, next) => {
+//   res.status(200).json({ message: "Fetch post list successfully", posts });
+// });
+
+// app.post("/api/posts", (req, res, next) => {
+//   const post = req.body;
+//   console.log(post);
+//   res.status(200).json({
+//     message: "Post added successfully",
+//   });
+// });
 
 module.exports = app;
