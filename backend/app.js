@@ -1,7 +1,8 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
+const path = require("path");
+const app = express();
 const { notFound, errorHandler } = require("./middleware/errorMiddleware.js");
 const serverConfig = require("./config/serverConfig.js");
 const connectDB = require("./config/db.js");
@@ -46,24 +47,15 @@ if (process.env.NODE_ENV === "development") {
 // });
 
 const postRoutes = require("./routes/post");
-
+//routes
 app.use("/api/posts", postRoutes);
 
 //configuration for static file
+console.log(path.join("backend/uploads"));
+
+app.use("/uploads", express.static(path.join("backend/uploads")));
 
 app.use(notFound);
 app.use(errorHandler);
-
-// app.get("/api/posts", (req, res, next) => {
-//   res.status(200).json({ message: "Fetch post list successfully", posts });
-// });
-
-// app.post("/api/posts", (req, res, next) => {
-//   const post = req.body;
-//   console.log(post);
-//   res.status(200).json({
-//     message: "Post added successfully",
-//   });
-// });
 
 module.exports = app;

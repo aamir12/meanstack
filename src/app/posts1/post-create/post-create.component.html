@@ -1,0 +1,39 @@
+<mat-card>
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form
+    (submit)="onPostSubmit()"
+    [formGroup]="postForm"
+    #postFromRef="ngForm"
+    *ngIf="!isLoading"
+  >
+    <mat-form-field>
+      <input
+        matInput
+        type="text"
+        formControlName="title"
+        minlength="3"
+        placeholder="Post Title"
+      />
+      <mat-error *ngIf="f.title.hasError('required')"
+        >Please enter a post title.</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field>
+      <textarea
+        matInput
+        rows="4"
+        name="content"
+        formControlName="content"
+        placeholder="Post Content"
+      ></textarea>
+      <mat-error *ngIf="f.content.hasError('required')"
+        >Please enter a post content.</mat-error
+      >
+    </mat-form-field>
+    <button mat-raised-button class="btnSave" color="accent" type="submit">
+      Save Post
+    </button>
+
+    <a mat-raised-button [routerLink]="['/']" color="danger">Cancel</a>
+  </form>
+</mat-card>
