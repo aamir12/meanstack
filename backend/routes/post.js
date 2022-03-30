@@ -1,6 +1,9 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
+
+
+const {protect} = require("../middleware/authMiddleware");
+
 
 const {
   getPostList,
@@ -40,9 +43,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.route("/").get(getPostList);
-router.route("/").post(upload.single("image"), createPost);
+router.route("/").post(protect,upload.single("image"), createPost);
 
-router.route("/:id").get(getPostById).delete(deletePost);
-router.route("/:id").put(upload.single("image"), updatePost);
+router.route("/:id").get(getPostById).delete(protect,deletePost);
+router.route("/:id").put(protect,upload.single("image"), updatePost);
 
 module.exports = router;

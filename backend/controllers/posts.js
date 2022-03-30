@@ -51,11 +51,13 @@ const createPost = asyncHandler(async (req, res) => {
     title: req.body.title,
     content: req.body.content,
     imagePath: url + "/uploads/" + req.file.filename,
+    creator: req.userData._id
   });
   const createdPost = await post.save();
   res.status(201).json({
     message: "Post added successfully",
     ...createdPost._doc,
+    id:createdPost._doc._id
   });
 });
 
@@ -69,18 +71,24 @@ const updatePost = asyncHandler(async (req, res) => {
     const url = req.protocol + "://" + req.get("host");
     imagePath = url + "/uploads/" + req.file.filename;
   }
-  console.log(req.params.id);
-  console.log(req.body);
-  console.log(imagePath);
-  const post = await Post.findById(req.params.id);
-  if (post) {
-    post.title = title;
-    post.content = content;
-    post.imagePath = imagePath;
-    const updatedPost = await post.save();
-    res.json(updatedPost);
+  const postExit = await Post.findById(req.params.id);
+  if (postExit) {
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
+      creator: req.userData._id
+    });
+    // postExit.title = title;
+    // postExit.content = content;
+    // postExit.imagePath = imagePath;
+    // postExit.creator = req.userData._id
+    // const updatedPost = await postExit.save();
+    await Post.updateOne({ _id: req.params.id, creator: req.userData._id }, post)
+    res.status(200).json({ message: "Update successful!" });
   } else {
-    res.status(404);
+    res.status(401);
     throw new Error("Post not found");
   }
 });

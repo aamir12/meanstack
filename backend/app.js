@@ -47,12 +47,12 @@ if (process.env.NODE_ENV === "development") {
 // });
 
 const postRoutes = require("./routes/post");
+const userRoutes = require("./routes/user");
 //routes
 app.use("/api/posts", postRoutes);
+app.use("/api/user", userRoutes);
 
 //configuration for static file
-console.log(path.join("backend/uploads"));
-
 app.use("/uploads", express.static(path.join("backend/uploads")));
 
 app.use(notFound);

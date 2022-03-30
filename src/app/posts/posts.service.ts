@@ -58,14 +58,6 @@ export class PostsService {
         postData
       )
       .subscribe((responseData) => {
-        const post: Post = {
-          id: responseData.post.id,
-          title: title,
-          content: content,
-          imagePath: responseData.post.imagePath,
-        };
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
