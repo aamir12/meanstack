@@ -5,10 +5,19 @@ const Post = require("../models/postModel.js");
 // @route   GET /api/getPostList
 // @access  Public
 const getPostList = asyncHandler(async (req, res) => {
-  const posts = await Post.find();
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.page;
+
+  const postQuery =  Post.find();
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+  const posts =  await postQuery;
+  const count = await Post.count();
   res.status(200).json({
     message: "Posts fetched successfully!",
     posts,
+    count
   });
 });
 
@@ -31,10 +40,8 @@ const getPostById = asyncHandler(async (req, res) => {
 // @route   DELETE /api/posts/:id
 // @access  Private/Admin
 const deletePost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
-
+  const post = await Post.deleteOne({ _id: req.params.id, creator: req.userData._id});
   if (post) {
-    await post.remove();
     res.json({ message: "Post deleted" });
   } else {
     res.status(404);
@@ -65,7 +72,6 @@ const createPost = asyncHandler(async (req, res) => {
 // @route   PUT /api/posts/:id
 
 const updatePost = asyncHandler(async (req, res) => {
-  const { title, content } = req.body;
   let imagePath = req.body.imagePath;
   if (req.file) {
     const url = req.protocol + "://" + req.get("host");
@@ -74,7 +80,7 @@ const updatePost = asyncHandler(async (req, res) => {
   const postExit = await Post.findById(req.params.id);
   if (postExit) {
     const post = new Post({
-      _id: req.body.id,
+      _id: req.params.id,
       title: req.body.title,
       content: req.body.content,
       imagePath: imagePath,
