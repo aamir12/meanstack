@@ -1,8 +1,0 @@
-mat-form-field,
-textarea {
-  width: 100%;
-}
-
-:host ::ng-deep .btnSave {
-  margin-right: 5px;
-}
