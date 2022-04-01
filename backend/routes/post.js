@@ -1,9 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 
-
-const {protect} = require("../middleware/authMiddleware");
-
+const { protect } = require("../middleware/authMiddleware");
 
 const {
   getPostList,
@@ -11,6 +9,7 @@ const {
   deletePost,
   createPost,
   updatePost,
+  deleteAll,
 } = require("../controllers/posts");
 
 const Post = require("../models/postModel");
@@ -31,7 +30,7 @@ const storage = multer.diskStorage({
     if (isValid) {
       error = null;
     }
-    cb(error, "backend/uploads");
+    cb(error, "uploads"); //cb(error, "backend/uploads");
   },
   filename: (req, file, cb) => {
     const name = file.originalname.toLowerCase().split(" ").join("-");
@@ -43,9 +42,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.route("/").get(getPostList);
-router.route("/").post(protect,upload.single("image"), createPost);
+router.route("/").post(protect, upload.single("image"), createPost);
+router.route("/deleteAll").delete(deleteAll);
 
-router.route("/:id").get(getPostById).delete(protect,deletePost);
-router.route("/:id").put(protect,upload.single("image"), updatePost);
+router.route("/:id").get(getPostById).delete(protect, deletePost);
+router.route("/:id").put(protect, upload.single("image"), updatePost);
 
 module.exports = router;

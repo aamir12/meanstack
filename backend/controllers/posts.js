@@ -105,10 +105,19 @@ const updatePost = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Delete a post
+// @route   DELETE /api/posts/deleteAll
+// @access  Private/Admin
+const deleteAll = asyncHandler(async (req, res) => {
+  const post = await Post.remove({});
+  res.json({ message: "All post deleted" });
+});
+
 module.exports = {
   getPostList,
   getPostById,
   deletePost,
   createPost,
   updatePost,
+  deleteAll,
 };

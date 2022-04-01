@@ -18,18 +18,19 @@ if (process.env.NODE_ENV === "development") {
   app.use(cors());
   app.use(morgan("dev"));
 } else {
-  const whitelist = serverConfig.allowOrigins;
-  const corsOptions = {
-    origin: function (origin, callback) {
-      if (!origin || whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-  };
+  // const whitelist = serverConfig.allowOrigins;
+  // const corsOptions = {
+  //   origin: function (origin, callback) {
+  //     if (!origin || whitelist.indexOf(origin) !== -1) {
+  //       callback(null, true);
+  //     } else {
+  //       callback(new Error("Not allowed by CORS"));
+  //     }
+  //   },
+  // };
 
-  app.use(cors(corsOptions));
+  // app.use(cors(corsOptions));
+  app.use(cors());
 }
 
 //custom cors solution
@@ -46,14 +47,19 @@ if (process.env.NODE_ENV === "development") {
 //   next();
 // });
 
+//configuration for static file
+//app.use("/uploads", express.static(path.join("backend/uploads")));
+app.use("/uploads", express.static(path.join("uploads")));
+app.use("/", express.static(path.join(__dirname, "angular")));
+
 const postRoutes = require("./routes/post");
 const userRoutes = require("./routes/user");
 //routes
 app.use("/api/posts", postRoutes);
 app.use("/api/user", userRoutes);
-
-//configuration for static file
-app.use("/uploads", express.static(path.join("backend/uploads")));
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, "angular", "index.html"));
+});
 
 app.use(notFound);
 app.use(errorHandler);

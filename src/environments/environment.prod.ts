@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  URL: 'http://localhost:3000',
+  URL: 'http://basicnodeangularapp-env.eba-zuwxrurg.us-east-2.elasticbeanstalk.com/api',
 };
